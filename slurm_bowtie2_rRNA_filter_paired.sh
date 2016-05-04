@@ -5,7 +5,7 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, May 4, 2016 11:53 AM
+# @Last modified time: Wednesday, May 4, 2016 11:56 AM
 # @License: CC BY-NC-SA
 
 #SBATCH -n 1
@@ -16,7 +16,7 @@
 
 
 # check if we have 3 arguments
-if [ ! $# == 3 ]; then
+if [ ! $# == 4 ]; then
   echo "Usage: $0 [rRNA index argument] [Read 1 file] [Read 2 file] [target dir e.g. /tmp/]"
   exit
 fi
