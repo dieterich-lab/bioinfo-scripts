@@ -5,7 +5,7 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, May 4, 2016 2:07 PM
+# @Last modified time: Wednesday, May 4, 2016 2:18 PM
 # @License: CC BY-NC-SA
 
 #SBATCH -n 1
@@ -27,7 +27,7 @@ fi
 
 # remove the file extension and potential "R1" markings
 # (works for double extension, e.g. .fastq.gz)
-target=`expr ${1/_R1/} : '\(.*\)\..*\.'`target=`expr ${1/_R1/} : '\(.*\)\..*\.'`
+target=`expr ${1/_R1/} : '\(.*\)\..*\.'`
 
 # load the flexbar module
 module load flexbar
