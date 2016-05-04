@@ -5,13 +5,13 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, May 4, 2016 2:18 PM
+# @Last modified time: Wednesday, May 4, 2016 2:35 PM
 # @License: CC BY-NC-SA
 
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH -c 10
-#SBATCH --mem=4G
+#SBATCH --mem=10G
 #SBATCH -J "flexbar paired"
 
 
