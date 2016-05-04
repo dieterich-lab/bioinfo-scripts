@@ -5,14 +5,14 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, May 4, 2016 11:39 AM
+# @Last modified time: Wednesday, May 4, 2016 11:53 AM
 # @License: CC BY-NC-SA
 
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH -c 20
 #SBATCH --mem=4G
-#SBATCH -J bowtie2 rRNA filtering
+#SBATCH -J "bowtie2 rRNA filtering"
 
 
 # check if we have 3 arguments
