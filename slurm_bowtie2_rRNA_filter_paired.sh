@@ -5,7 +5,7 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, May 4, 2016 11:56 AM
+# @Last modified time: Wednesday, May 4, 2016 2:08 PM
 # @License: CC BY-NC-SA
 
 #SBATCH -n 1
@@ -41,4 +41,4 @@ module load bowtie2
 # display timing information
 # write bz2 unmapping reads [== no rRNA] to target dir
 
-bowtie2 -x $1 -1 $2 -2 $3 -S /dev/null --threads 20 --mm --seed 1337 --time --un-conc-bz2 $3
+bowtie2 -x $1 -1 $2 -2 $3 -S /dev/null --threads 20 --mm --seed 1337 --time --un-conc-bz2 $4

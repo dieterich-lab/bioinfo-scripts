@@ -5,12 +5,12 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, May 4, 2016 11:54 AM
+# @Last modified time: Wednesday, May 4, 2016 2:07 PM
 # @License: CC BY-NC-SA
 
 #SBATCH -n 1
 #SBATCH -N 1
-#SBATCH -c 20
+#SBATCH -c 10
 #SBATCH --mem=4G
 #SBATCH -J "flexbar paired"
 
@@ -32,10 +32,10 @@ target=`expr ${1/_R1/} : '\(.*\)\..*\.'`target=`expr ${1/_R1/} : '\(.*\)\..*\.'`
 # load the flexbar module
 module load flexbar
 
-# run on 20 CPUs
+# run on 10 CPUs
 # compress with bz2
 # only 30nt or longer
 # no uncalled bases
 # quality min phred 28
 # use sanger quality values (i.e. Illumina 1.9+ encoding)
-flexbar -r $1 -p $2 -t $3/$target  -n 20 -z BZ2 -m 30 -u 0 -q 28 -a /biosw/flexbar/Adapter.fa -f sanger
+flexbar -r $1 -p $2 -t $3/$target  -n 10 -z BZ2 -m 30 -u 0 -q 28 -a /biosw/flexbar/Adapter.fa -f sanger
