@@ -5,13 +5,13 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, May 4, 2016 2:08 PM
+# @Last modified time: Friday, May 6, 2016 4:17 PM
 # @License: CC BY-NC-SA
 
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH -c 20
-#SBATCH --mem=4G
+#SBATCH --mem=20G
 #SBATCH -J "bowtie2 rRNA filtering"
 
 
@@ -21,14 +21,14 @@ if [ ! $# == 4 ]; then
   exit
 fi
 
-# $1 -> Read 1
-# $2 -> Read 3
-# $3 -> Target directory
+# $1 -> rRNA index
+# $2 -> Read 1
+# $3 -> Read 3
+# $4 -> Target directory
 
 # remove the file extension and potential "R1" markings
 # (works for double extension, e.g. .fastq.gz)
-target=`expr ${1/_R1/} : '\(.*\)\..*\.'`
-
+target=`expr ${2/_1/} : '\(.*\)\..*\.'`
 
 
 # load the bowtie2 module
@@ -41,4 +41,4 @@ module load bowtie2
 # display timing information
 # write bz2 unmapping reads [== no rRNA] to target dir
 
-bowtie2 -x $1 -1 $2 -2 $3 -S /dev/null --threads 20 --mm --seed 1337 --time --un-conc-bz2 $4
+bowtie2 -x $1 -1 $2 -2 $3 -S /dev/null --threads 20 --mm --seed 1337 --time --un-conc-bz2 $4/$target.fastq.bz2
