@@ -8,7 +8,7 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, July 27, 2016 7:40 PM
+# @Last modified time: Wednesday, July 27, 2016 8:00 PM
 # @License: CC BY-NC-SA
 
 ## updated for HD cluster by Tobias / 14.04.2016
@@ -139,6 +139,20 @@ sbatch -J "bwa index $organism" -o bwa.log bwa.sh
 cd ..
 
 
+printf "Toplevel: $toplevel\n"
+
+echo "Building bowtie2 index...\n"
+# bowtie2 index
+module load bowtie2
+mkdir bowtie2
+cd bowtie2
+ln -vs ../${original} ${original}
+srun -J "bowtie2 index $organism" -e bowtie2.err  -o bowtie2.log -c 2 --mem 40000 bowtie2-build-s $original $toplevel
+
+cd ..
+pwd
+gtf=$(ls -C *.gtf)
+
 # STAR index creation
 
 printf "Generating STAR index\n"
@@ -156,21 +170,6 @@ chmod 770 star.sh;
 sbatch -J "STAR index: $organism"  --cpus-per-task=40 --mem=256GB -o star.log star.sh
 cd ..
 
-
-
-printf "Toplevel: $toplevel\n"
-
-echo "Building bowtie2 index...\n"
-# bowtie2 index
-module load bowtie2
-mkdir bowtie2
-cd bowtie2
-ln -vs ../${original} ${original}
-srun -J "bowtie2 index $organism" -e bowtie2.err  -o bowtie2.log -c 2 --mem 40000 bowtie2-build-s $original $toplevel
-
-cd ..
-pwd
-gtf=$(ls -C *.gtf)
 
 # Fix GTF with cuffcompare
 
