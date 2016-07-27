@@ -3,9 +3,17 @@
 ## original script by Jorge Boucas (@jorgeboucas / GitHub)
 ## http://mpg-age-bioinformatics.github.io/
 
+# @Author: Tobias Jakobi <tjakobi>
+# @Date:   Tuesday, July 26, 2016 2:00 PM
+# @Email:  tobias.jakobi@med.uni-heidelberg.de
+# @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
+# @Last modified by:   tjakobi
+# @Last modified time: Wednesday, July 27, 2016 7:40 PM
+# @License: CC BY-NC-SA
+
 ## updated for HD cluster by Tobias / 14.04.2016
 
-# This script builds the references and annotations folder for each selected organism and selected release. 
+# This script builds the references and annotations folder for each selected organism and selected release.
 # eg. caenorhabditis_elegans release: WBcell235.78
 # Level1 folder = caenorhabditis_elegans
 # Level2 folder = WBcell235_78
@@ -17,99 +25,89 @@
 # cuffcompare fixed GTF index = caenorhabditis_elegans/WBcell235_78/GTF_cuffcmp_GTF_index/
 # chromosomes fasta = caenorhabditis_elegans/WBcell235_78/fasta
 
-# example tophat options: 
-# --transcriptome-index $references_directory/caenorhabditis_elegans/WBcell235_78/GTF_cuffcmp_GTF_index 
+# example tophat options:
+# --transcriptome-index $references_directory/caenorhabditis_elegans/WBcell235_78/GTF_cuffcmp_GTF_index
 # for the reference indexed genome use $references_directory/caenorhabditis_elegans/WBcell235_78/bowtie2/WBcel235.dna.toplevel
 
 # example cufflinks options:
 # -g $references_directory/caenorhabditis_elegans/WBcell235_78/cuffcmp_GTF.WBcel235.78.gtf
 
 # example cuffcompare options:
-# -s $references_directory/caenorhabditis_elegans/WBcell235_78/chromosomes  
+# -s $references_directory/caenorhabditis_elegans/WBcell235_78/chromosomes
 
-curl -l ftp://ftp.ensembl.org/pub/current_fasta/
 
-printf "Paste your organism from the list above: "
-read organism
+## check if organsim directory already exists, if not create it
+organism=$1
 
-if [ ! -d "organism" ]; then mkdir $organism; fi
+if [ -d "$organism" ]; then
+  printf "Directory $organism already exists, skipping creation\n"
+else
+  mkdir $organism
+fi
 
 cd $organism
 
-# check the latest release
-gtf_import=$(curl -l ftp://ftp.ensembl.org/pub/current_gtf/$organism/ | grep gtf.gz)
-releaseA=$(echo $gtf_import | cut -f2 -d.)
-releaseB=$(echo $gtf_import | cut -f3 -d.)
-sep=_
-release=$releaseA$sep$releaseB 
+## Choice: either we get the latest release (default) or the user specifies
+## the release
 
+release_force=$2
 
-# ask user if latest relases should be intalled or and older one
+if [ $release_force ] ; then
 
-printf "The latest realse is the $release, do you wish to add the (l)atest release or an (o)lder release? (l/o) "
-read answer1
+  release="release-$2"
 
-if [ $answer1 == 'l' ]; then
+  printf "ENSEMBL release $release manually selected\n"
 
-printf "Setting up the latest release"
+  # check the latest release
+  gtf_import=$(curl -s -l ftp://ftp.ensembl.org/pub/$release/gtf/$organism/ | grep gtf.gz)
+  releaseA=$(echo $gtf_import | cut -f2 -d.)
+  releaseB=$(echo $gtf_import | cut -f3 -d.)
+  sep=_
+  release_code=$releaseA$sep$releaseB
+  printf "Genome ID is $release_code\n"
 
-elif [ $answer1 == 'o' ]; then
+else
+  printf "Get genome releases...\n"
 
-curl -l ftp://ftp.ensembl.org/pub/ | grep release
+  # check the latest release
+  gtf_import=$(curl -s -l ftp://ftp.ensembl.org/pub/current_gtf/$organism/ | grep gtf.gz)
+  releaseA=$(echo $gtf_import | cut -f2 -d.)
+  releaseB=$(echo $gtf_import | cut -f3 -d.)
+  release="release-$releaseB"
+  sep=_
+  release_code=$releaseA$sep$releaseB
 
-printf "Paste a release from above (eg. release-66): "
-read answer2
-
-old_gtf_path=$answer2/gtf/
-old_fasta_path=$answer2/fasta/
-
-printf "ftp://ftp.ensembl.org/pub/$old_gtf_path$organism/"
-
-gtf_import=$(curl -l ftp://ftp.ensembl.org/pub/$old_gtf_path$organism/ | grep gtf.gz)
-releaseA=$(echo $gtf_import | cut -f2 -d.)
-releaseB=$(echo $gtf_import | cut -f3 -d.)
-sep=_
-release=$releaseA$sep$releaseB 
-
-else 
-
-printf "
-Exiting... you are only allowed to give in l or o
-"
-
-exit
-
+  printf "Genome ID is $release_code\n"
 fi
 
-# if the release does not exist on the organism folder add it. Otherwise, ask if the user wants to add more components
+mkdir $release_code
+cd $release_code
 
-if [ ! -d "$release" ]; then
 
-mkdir $release
-cd $release
 
-if [ $answer1 == 'l' ]; then
+printf "Downloading data...\n"
 
-wget ftp://ftp.ensembl.org/pub/current_fasta/$organism/dna/*.dna.*
-wget ftp://ftp.ensembl.org/pub/current_gtf/$organism/*.gtf.gz
+wget -nc ftp://ftp.ensembl.org/pub/$release/fasta/$organism/dna/*.dna.*
+wget -nc ftp://ftp.ensembl.org/pub/$release/gtf/$organism/*.gtf.gz
 
-else if [ $answer1 == 'o' ]; then
+rm -v *abinitio.gtf.gz
+rm -v *.chr.gtf.gz
 
-wget ftp://ftp.ensembl.org/pub/$old_fasta_path$organism/dna/*.dna.*
-wget ftp://ftp.ensembl.org/pub/$old_gtf_path$organism/*.gtf.gz
+printf "Uncompressing...\n"
 
-fi; fi
+parallel -v -j 40 srun gunzip {} ::: *.gz
 
-gunzip *.gz
+printf "Housekeeping...\n"
 
 namep1=$(echo $gtf_import | cut -f1 -d.)
 
 for file in $(ls $namep1.*); do
 nname=${file#"$namep1."}
 nname=${nname%"$namep1."}
-mv $file $nname; done
+mv -v $file $nname; done
 
-mkdir chromosomes
+
+mkdir -v chromosomes
 for file in $(ls *chromosome*); do
 if [ ${file} != chromosomes: ]; then
 chrp1=$(echo $file | cut -f4 -d.)
@@ -117,84 +115,33 @@ chrp2=$(echo $file | cut -f5 -d.)
 sep=.
 chr=$chrp1$sep$chrp2
 
-mv ${file} chromosomes/${chr}; fi; done
-
-mv *nonchromosomal* chromosomes/nonchromosomal.fa
+mv -v ${file} chromosomes/${chr}; fi; done
+mv -v *nonchromosomal* chromosomes/nonchromosomal.fa
 
 original=$(ls *dna.toplevel.fa)
 toplevel=${original#".fa"}
 toplevel=${toplevel%".fa"}
 
+# BWA index creation
 
-# BOWTIE2 index
-mkdir bowtie2
-cd bowtie2
-ln -s ../${original} ${original}
-module load bowtie2
-bowtie2-build-s $original $toplevel 2>&1 | tee bowtie.log
-which bowtie2 >> bowtie.log
-
-cd ..
-gtf=$(ls *.gtf)
-
-# Fix GTF with cuffcompare
-
-module load cufflinks
-cuffcompare -V -CG -s chromosomes -r $gtf $gtf 2>&1 | tee cuffcompare.log
-which cuffcompare >> cuffcompare.log
-
-mv cuffcmp.combined.gtf cuffcmp_GTF.$gtf
-tar -jcvf cuffcmp.results.tar.bz2 cuffcmp.* --remove-files
-
-# Generate TOPHAT transcriptome indexes
-
-
-printf "
-Indexing cuffcompare GTF
-"
-
-module load tophat
-mkdir cuffcmp_GTF_index
-tophat2 -G cuffcmp_GTF.$gtf --transcriptome-index cuffcmp_GTF_index bowtie2/$toplevel 2>&1 | tee index.log
-which tophat2 >> index.log
-mv index.log cuffcmp_GTF_index/index.log
-rm -r tophat_out
-
-
-printf "
-Indexing GTF
-"
-
-mkdir GTF_index
-tophat2 -G $gtf --transcriptome-index GTF_index bowtie2/$toplevel 2>&1 | tee index.log
-which tophat2 >> index.log
-mv index.log GTF_index/index.log
-rm -r tophat_out
-
-
-# BWA index creation 
-
-printf "
-Generating BWA index
-"
+printf "Generating BWA index\n"
 
 module load bwa
 mkdir bwa
 cd bwa
 full_path=$(pwd)
-ln -s ../${original} ${original}  
+ln -s ../${original} ${original}
 echo "#!/bin/bash
 bwa index -a bwtsw -p ${full_path}/${original::(-3)} ${original}
 which bwa" > bwa.sh
-chmod 770 bwa.sh; sbatch -p himem,hugemem,blade -o bwa.log bwa.sh
+chmod 770 bwa.sh;
+sbatch -J "bwa index $organism" -o bwa.log bwa.sh
 cd ..
 
 
 # STAR index creation
 
-printf "
-Generating STAR index
-"
+printf "Generating STAR index\n"
 
 module load star
 mkdir star
@@ -203,10 +150,61 @@ full_path=$(pwd)
 ln -s ../${original} ${original}
 ln -s ../${gtf} ${gtf}
 echo "#!/bin/bash
-STAR --runMode genomeGenerate --genomeDir ${full_path} --genomeFastaFiles ${original} --runThreadN 20 --sjdbGTFfile ${gtf} --sjdbOverhang 100 --limitGenomeGenerateRAM 240000000000
-which STAR
-" > star.sh; chmod 770 star.sh; sbatch --cpus-per-task=20 -p himem,hugemem,blade --mem=256GB -o star.log star.sh
+STAR --runMode genomeGenerate --genomeDir ${full_path} --genomeFastaFiles ${original} --runThreadN 40 --sjdbGTFfile ${gtf} --sjdbOverhang 100 --limitGenomeGenerateRAM 240000000000
+which STAR" > star.sh;
+chmod 770 star.sh;
+sbatch -J "STAR index: $organism"  --cpus-per-task=40 --mem=256GB -o star.log star.sh
 cd ..
+
+
+
+printf "Toplevel: $toplevel\n"
+
+echo "Building bowtie2 index...\n"
+# bowtie2 index
+module load bowtie2
+mkdir bowtie2
+cd bowtie2
+ln -vs ../${original} ${original}
+srun -J "bowtie2 index $organism" -e bowtie2.err  -o bowtie2.log -c 2 --mem 40000 bowtie2-build-s $original $toplevel
+
+cd ..
+pwd
+gtf=$(ls -C *.gtf)
+
+# Fix GTF with cuffcompare
+
+printf "Fixing GTF $gtf...\n"
+
+module load cufflinks
+which cuffcompare >> cuffcompare.log
+srun -J "cuffcompare fix $organism" -c 20 --mem=40000 -o cuffcompare.log cuffcompare -V -CG -s chromosomes -r $gtf $gtf
+mv -v cuffcmp.combined.gtf cuffcmp_GTF.$gtf
+srun -o tar.log -J "cuffcompare taring" tar -cvf cuffcmp.results.tar cuffcmp.* --remove-files
+srun -o pbzip2.log -J "cuffcompare bzipping" -c 20 --mem=4000 pbzip2 -p20 cuffcmp.results.tar
+
+# Generate TOPHAT transcriptome indexes
+
+printf "Indexing cuffcompare GTF\n"
+
+module load tophat
+mkdir cuffcmp_GTF_index
+srun -J "TopHat2 $organism"  -e tophat2.err -o tophat2.log -c 40 --mem=40GB tophat2 -p 40 -G cuffcmp_GTF.$gtf --transcriptome-index cuffcmp_GTF_index bowtie2/$toplevel
+which tophat2 >> tophat2.log
+mv tophat2.log tophat2.err cuffcmp_GTF_index/
+rm -r tophat_out
+
+
+printf "Indexing GTF\n"
+
+mkdir GTF_index
+srun -J "TopHat2 $organism"  -e tophat2_gtf_index.err -o tophat2_gtf_index.log -c 40 --mem=40GB tophat2 -p 40 -G $gtf --transcriptome-index GTF_index bowtie2/$toplevel
+which tophat2 >> tophat2_gtf_index.log
+mv tophat2_gtf_index.log tophat2_gtf_index.err cuffcmp_GTF_index/
+rm -r tophat_out
+
+
+exit
 
 else
 
@@ -221,8 +219,8 @@ Press enter to list components.
 "
 read
 ls
-printf " 
-Do you wish to add more components? (y/n) 
+printf "
+Do you wish to add more components? (y/n)
 "
 read answer
 
@@ -234,7 +232,7 @@ elif [ $answer == 'y' ]; then
 
 printf "
 Please contact me: tobias.jakobi@med.uni-heidelberg.de | (+49) 6221 56 39126
-"; 
+";
 
 else
 
