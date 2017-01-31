@@ -13,23 +13,24 @@
 #SBATCH -c 20
 #SBATCH --mem=20G
 #SBATCH -J "bowtie2 rRNA filtering"
+#SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
+#SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-
-# check if we have 3 arguments
-if [ ! $# == 4 ]; then
-  echo "Usage: $0 [rRNA index argument] [Read 1 file] [Read 2 file] [target dir e.g. /tmp/]"
+# check if we have 5 arguments
+if [ ! $# == 5 ]; then
+  echo "Usage: $0 [rRNA index argument] [Read 1 file] [Read 2 file] [target dir e.g. /awesome/project/] [R1 marker, e.g. R1 or 1_sequence]"
   exit
 fi
 
 # $1 -> rRNA index
 # $2 -> Read 1
-# $3 -> Read 3
+# $3 -> Read 2
 # $4 -> Target directory
+# $5 -> R1 marker
 
 # remove the file extension and potential "R1" markings
 # (works for double extension, e.g. .fastq.gz)
-target=`expr ${2/_1/} : '\(.*\)\..*\.'`
-
+target=`expr ${2/$5/} : '\(.*\)\..*\.'`
 
 # load the bowtie2 module
 module load bowtie2
@@ -39,6 +40,6 @@ module load bowtie2
 # set fixed seed
 # memory mapped IO for multiple instances
 # display timing information
-# write bz2 unmapping reads [== no rRNA] to target dir
+# write gz unmapping reads [== no rRNA] to target dir
 
-bowtie2 -x $1 -1 $2 -2 $3 -S /dev/null --threads 20 --mm --seed 1337 --time --un-conc-bz2 $4/$target.fastq.bz2
+bowtie2 -x $1 -1 $2 -2 $3 -S $4/$target.sam --no-unal --omit-sec-seq --threads 20 --mm --seed 1337 --time --un-conc-gz $4/$target.fastq.gz 2> $4/$target.log
