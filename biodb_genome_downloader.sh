@@ -8,7 +8,7 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, July 27, 2016 8:00 PM
+# @Last modified time: Friday, July 29, 2016 6:45 PM
 # @License: CC BY-NC-SA
 
 ## updated for HD cluster by Tobias / 14.04.2016
@@ -164,7 +164,7 @@ full_path=$(pwd)
 ln -s ../${original} ${original}
 ln -s ../${gtf} ${gtf}
 echo "#!/bin/bash
-STAR --runMode genomeGenerate --genomeDir ${full_path} --genomeFastaFiles ${original} --runThreadN 40 --sjdbGTFfile ${gtf} --sjdbOverhang 100 --limitGenomeGenerateRAM 240000000000
+STAR --runMode genomeGenerate --genomeDir ${full_path} --genomeFastaFiles ${original} --runThreadN 40 --sjdbOverhang 100 --limitGenomeGenerateRAM 240000000000
 which STAR" > star.sh;
 chmod 770 star.sh;
 sbatch -J "STAR index: $organism"  --cpus-per-task=40 --mem=256GB -o star.log star.sh
