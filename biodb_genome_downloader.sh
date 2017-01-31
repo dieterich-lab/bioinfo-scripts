@@ -4,7 +4,6 @@
 ## http://mpg-age-bioinformatics.github.io/
 
 # @Author: Tobias Jakobi <tjakobi>
-# @Date:   Tuesday, July 26, 2016 2:00 PM
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @License: CC BY-NC-SA
