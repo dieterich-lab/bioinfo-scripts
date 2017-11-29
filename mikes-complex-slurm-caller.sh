@@ -42,6 +42,7 @@ ROOT_DIR="./"
 EXAMPLE_PARAM="default_num_or_string"
 VERBOSE=false
 LOGFILE=""
+DRY_RUN=false
 
 #--- RUN GETOPTS --------------------------------------------------------------
 while true; do
@@ -49,8 +50,9 @@ while true; do
     -h | --help ) 			  	echo "$USAGE" >&2;		shift ;;
     -v | --verbose ) 		  	VERBOSE=true; 			shift ;;
     -L | --logfile ) 			LOGFILE="$2"; 			shift; shift ;;
-    -e | --example-flag ) 		DRY_RUN=true; 			shift ;;
-    -E | --example-parameter ) 	LOGFILE="$2"; 			shift; shift ;;
+    -e | --example-flag ) 		FLAGEXAMPLE=true; 			shift ;;
+    -d | --dry-run ) 		    DRY_RUN=true; 			shift ;;
+    -E | --example-parameter ) 	VALUEEXAMPLE="$2"; 			shift; shift ;;
 
     -- ) shift; break ;;
     * ) break ;;
