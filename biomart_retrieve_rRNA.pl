@@ -31,9 +31,9 @@ my $file_rrna = $file_name.".rRNA.fasta";
 my $rrna_name =  $file_name.".rRNA";
 
 system("mkdir -v $full_name;");
-system("mkdir -v $full_name/rRNA");
-system("mkdir -v $full_name/rRNA_and_mt-rRNA;");
-system("mkdir -v $full_name/rRNA_and_mt-tRNA;");
+#system("mkdir -v $full_name/rRNA");
+#system("mkdir -v $full_name/mt-rRNA;");
+#system("mkdir -v $full_name/mt-tRNA;");
 
 my $confFile = "/biosw/biomart-perl/0.7/conf/martURLLocation.xml";
 
@@ -63,7 +63,7 @@ my $query_runner = BioMart::QueryRunner->new();
 $query_runner->uniqueRowsOnly(1);
 $query_runner->execute($query_mtRNA);
 
-open( MT , ">", $full_name."/rRNA_and_mt-rRNA/$file_name.mt-rRNA.fasta" ) || die "Can't open file 1\n";
+open( MT , ">", $full_name."/$file_name.mt-rRNA.fasta" ) || die "Can't open file 1\n";
 $query_runner->printHeader(*MT);
 $query_runner->printResults(*MT);
 $query_runner->printFooter(*MT);
@@ -85,7 +85,7 @@ $query_runner = BioMart::QueryRunner->new();
 $query_runner->uniqueRowsOnly(1);
 $query_runner->execute($query_mtRNA);
 
-open( MT , ">", $opts{'s'}."/rRNA_and_mt-tRNA/$file_name.mt-tRNA.fasta" ) || die "Can't open file 2\n";
+open( MT , ">", $opts{'s'}."/$file_name.mt-tRNA.fasta" ) || die "Can't open file 2\n";
 $query_runner->printHeader(*MT);
 $query_runner->printResults(*MT);
 $query_runner->printFooter(*MT);
@@ -106,11 +106,11 @@ $query_runner = BioMart::QueryRunner->new();
 $query_runner->uniqueRowsOnly(1);
 $query_runner->execute($query_rRNA);
 
-open( RNA , ">", $opts{'s'}."/rRNA/$file_name.rRNA.fasta" ) || die "Can't open file 3\n";
+open( RNA , ">", $opts{'s'}."/$file_name.rRNA.fasta" ) || die "Can't open file 3\n";
 $query_runner->printHeader(*RNA);
 $query_runner->printResults(*RNA);
 $query_runner->printFooter(*RNA);
 close(RNA);
 
-system("module load bowtie2; cd $full_name/rRNA_and_mt-rRNA/; bowtie2-build $file_mt $mt_name;");
-system("module load bowtie2; cd $full_name/rRNA/; bowtie2-build $file_rrna $rrna_name;");
+#system("module load bowtie2; cd $full_name/rRNA_and_mt-rRNA/; bowtie2-build $file_mt $mt_name;");
+#system("module load bowtie2; cd $full_name/rRNA/; bowtie2-build $file_rrna $rrna_name;");

@@ -31,7 +31,8 @@ fi
 # remove the file extension and potential "R1" markings
 # (works for double extension, e.g. .fastq.gz)
 target=`expr ${2/$5/} : '\(.*\)\..*\.'`
-
+#echo $target
+#exit
 # load the bowtie2 module
 module load bowtie2
 
