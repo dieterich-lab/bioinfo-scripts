@@ -294,7 +294,7 @@ echo "#!/bin/bash
 hisat2-build $original $toplevel
 which hisat2" > hisat2.sh
 chmod 770 hisat2.sh;
-sbatch -p general --cpus-per-task=2 --mem=10GB -J "HISAT2 index: $organism / $release" -o hisat2.log hisat2.sh
+sbatch -p general --cpus-per-task=2 --mem=50GB -J "HISAT2 index: $organism / $release" -o hisat2.log hisat2.sh
 cd ..
 
 
@@ -312,7 +312,7 @@ echo "#!/bin/bash
 bwa index -a bwtsw -p ${full_path}/${original::(-3)} ${original}
 which bwa" > bwa.sh
 chmod 770 bwa.sh;
-sbatch -p general --cpus-per-task=2 --mem=10GB -J "BWA index: $organism / $release" -o bwa.log bwa.sh
+sbatch -p general --cpus-per-task=2 --mem=50GB -J "BWA index: $organism / $release" -o bwa.log bwa.sh
 cd ..
 
 
@@ -324,7 +324,7 @@ module load bowtie2
 mkdir bowtie2
 cd bowtie2
 ln -vs ../${original} ${original}
-srun -J "Bowtie2 index: $organism / $release" -e bowtie2.err  -o bowtie2.log -c 2 --mem 10G bowtie2-build-s $original $toplevel
+srun -J "Bowtie2 index: $organism / $release" -e bowtie2.err  -o bowtie2.log -c 2 --mem 50G bowtie2-build-s $original $toplevel
 
 cd ..
 pwd
