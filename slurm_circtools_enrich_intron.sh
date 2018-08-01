@@ -9,7 +9,7 @@
 #SBATCH -N 1
 #SBATCH -c 30
 #SBATCH --mem=200G
-#SBATCH -J "circtools"
+#SBATCH -J "circtools enrich"
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
