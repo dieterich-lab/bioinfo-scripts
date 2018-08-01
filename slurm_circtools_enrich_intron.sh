@@ -13,11 +13,12 @@
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
+module load circtools
+
 # check if we have 8 arguments
 if [ ! $# == 8 ]; then
   echo "Usage: $0 [Chromosome sizes file] [Genome GTF file] [CLIP peak BED file] [CircRNA BED files] [output prefix] [output path] [# iterations] [TMP dir]"
   exit
 fi
 
-#/usr/bin/time -v circtools enrich -c ${4} -b ${3} -a ${2} -g ${1} -i ${7} -I intron -p 20 -P 1 -T 1 -o ${6}/ -F ${5} -t ${8}/
-/usr/bin/time -v python3 /home/tjakobi/repos/dieterichlab/circtools/circtools/circtools.py enrich -c ${4} -b ${3} -a ${2} -g ${1} -i ${7} -I intron -p 20 -P 1 -T 1 -o ${6}/ -F ${5} -t ${8}/
+/usr/bin/time -v circtools enrich -c ${4} -b ${3} -a ${2} -g ${1} -i ${7} -I intron -p 20 -P 1 -T 1 -o ${6}/ -F ${5} -t ${8}/
