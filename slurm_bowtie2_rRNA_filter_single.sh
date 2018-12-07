@@ -5,38 +5,40 @@
 # @Email:  tobias.jakobi@med.uni-heidelberg.de
 # @Project: University Hospital Heidelberg, Section of Bioinformatics and Systems Cardiology
 # @Last modified by:   tjakobi
-# @Last modified time: Wednesday, May 4, 2016 11:28 AM
+# @Last modified time: Friday, May 6, 2016 4:17 PM
 # @License: CC BY-NC-SA
 
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH -c 20
-#SBATCH --mem=4G
-#SBATCH -J bowtie2 rRNA filtering
+#SBATCH --mem=20G
+#SBATCH -J "bowtie2 rRNA filtering"
+#SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
+#SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-
-# input: 
-
-# check if we have 3 arguments
-if [ ! $# == 2 ]; then
-  echo "Usage: $0 [Read file] [target dir e.g. /tmp/]"
+# check if we have 5 arguments
+if [ ! $# == 3 ]; then
+  echo "Usage: $0 [rRNA index argument] [Read 1 file] [target dir e.g. /awesome/project/]"
   exit
 fi
 
-# $1 -> Read file
-# $2 -> Target directory
+# $1 -> rRNA index
+# $2 -> Read 1
+# $3 -> Target directory
 
 # remove the file extension and potential "R1" markings
 # (works for double extension, e.g. .fastq.gz)
-target=`expr ${1/_R1/} : '\(.*\)\..*\.'`
+target=`expr ${2//} : '\(.*\)\..*\.'`
+#echo $target
+#exit
+# load the bowtie2 module
+module load bowtie2
 
-# load the flexbar module
-module load flexbar
-
+# SAM output goes to /dev/null
 # run on 20 CPUs
-# compress with bz2
-# only 30nt or longer
-# no uncalled bases
-# quality min phred 28
-# use sanger quality values (i.e. Illumina 1.9+ encoding)
-flexbar -r $1 -t $2/$target  -n 20 -z BZ2 -m 30 -u 0 -q 28 -a /biosw/flexbar/Adapter.fa -f sanger
+# set fixed seed
+# memory mapped IO for multiple instances
+# display timing information
+# write gz unmapping reads [== no rRNA] to target dir
+
+bowtie2 -x $1 -U $2  -S /dev/null --no-unal --omit-sec-seq --threads 20 --mm --seed 1337 --time --un-gz $3/$target.fastq.gz 2> $3/$target.log
