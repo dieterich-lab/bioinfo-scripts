@@ -11,12 +11,12 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH -c 40
-#SBATCH --mem=200G
+#SBATCH --mem=400G
 #SBATCH -J "STAR genome alignment"
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-#module load star
+module load star
 #module load subread
 
 # check if we have 6 arguments
@@ -36,7 +36,7 @@ target=`expr ${2/$5/} : '\(.*\)\..*\.'`
 
 # create the target directory, STAR will not do that for us
 mkdir $4/$target
-STAR --genomeDir $1 --runThreadN 40 --readFilesIn $2 $3 --sjdbGTFfile $6 --readFilesCommand zcat --outFileNamePrefix $4/$target/ --outSAMtype BAM Unsorted SortedByCoordinate --outSAMstrandField intronMotif 
+STAR --genomeDir $1 --runThreadN 40 --readFilesIn $2 $3 --sjdbGTFfile $6 --readFilesCommand zcat --outFileNamePrefix $4/$target/ --outSAMtype BAM SortedByCoordinate --outSAMstrandField intronMotif --quantMode GeneCounts --outReadsUnmapped Fastx --outWigType bedGraph --genomeLoad NoSharedMemory  
 
 # --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 --outFilterMatchNmin 0
 
