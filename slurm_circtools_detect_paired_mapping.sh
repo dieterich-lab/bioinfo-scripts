@@ -16,7 +16,7 @@
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-module load star
+#module load star
 
 # check if we have 6 arguments
 if [ ! $# == 6 ]; then
@@ -68,6 +68,7 @@ STAR	--runThreadN 40\
 	--chimJunctionOverhangMin 15\
 	--sjdbGTFfile $6\
 	--quantMode GeneCounts\
+	--twopassMode Basic\
 	--chimOutType Junctions SeparateSAMold
 
 cd $4/$target
@@ -133,6 +134,7 @@ STAR	--runThreadN 40\
 	--chimJunctionOverhangMin 15\
 	--sjdbGTFfile $6\
 	--quantMode GeneCounts\
+	--twopassMode Basic\
 	--chimOutType Junctions SeparateSAMold
 
 cd $4/$target/mate1/
@@ -194,8 +196,8 @@ STAR	--runThreadN 40\
 	--chimJunctionOverhangMin 15\
 	--sjdbGTFfile $6\
 	--quantMode GeneCounts\
+	--twopassMode Basic\
 	--chimOutType Junctions SeparateSAMold
-
 
 cd $4/$target/mate2/
 
