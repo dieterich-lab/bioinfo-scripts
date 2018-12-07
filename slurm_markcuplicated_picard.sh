@@ -8,7 +8,7 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH -c 1
-#SBATCH --mem=100G
+#SBATCH --mem=250G
 #SBATCH -J "picard-tools"
 
 
