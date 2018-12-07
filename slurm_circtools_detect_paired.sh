@@ -12,6 +12,7 @@
 #SBATCH -J "circtools detect"
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
+#SBATCH -p long
 
 # check if we have 3 arguments
 if [ ! $# == 8 ]; then
@@ -19,4 +20,4 @@ if [ ! $# == 8 ]; then
   exit
 fi
 
-/usr/bin/time -v circtools detect @$1 -D -an $2 -A $3 -Pi -mt1 @$4 -mt2 @$5 -B @$6 -R $7 -M -Nr 2 2 -fg -G -k -O $8 -t ${8}_DCC_temp/ -F -L 20 -T 40
+DCC @$1 -D -an $2 -A $3 -Pi -mt1 @$4 -mt2 @$5 -B @$6 -R $7 -M -Nr 2 2 -fg -G -k -O $8 -t ${8}_DCC_temp/ -F -L 20 -T 40
