@@ -13,7 +13,7 @@
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-module load circtools
+#module load circtools
 
 # check if we have 8 arguments
 if [ ! $# == 8 ]; then
