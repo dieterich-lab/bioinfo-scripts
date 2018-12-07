@@ -30,7 +30,7 @@ fi
 
 # remove the file extension and potential "R1" markings
 # (works for double extension, e.g. .fastq.gz)
-target=`expr ${2/$5/} : '\(.*\)\..*\.'`
+target=`expr ${2/$5/} : '\(.*\)\..*\.' | sed 's/_1$//g' `
 #echo $target
 #exit
 # load the bowtie2 module
