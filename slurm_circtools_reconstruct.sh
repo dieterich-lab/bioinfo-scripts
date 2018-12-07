@@ -14,13 +14,13 @@
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-# check if we have 3 arguments
-if [ ! $# == 4 ]; then
-  echo "Usage: $0 [Sample name] [target dir e.g. /path/to/data/] [BED file] [CircRNACount directory]"
+# check if we have 5 arguments
+if [ ! $# == 5 ]; then
+  echo "Usage: $0 [Sample name] [target dir e.g. /path/to/data/] [BED file] [DCC dirrectory] [CircRNACount directory]"
   exit
 fi
 
-module load circtools
+#module load circtools
 module load samtools
 
 main_out=$2/
@@ -28,6 +28,7 @@ sample_name=$1
 bed_file=$3
 dcc_dir=$4
 tmp_folder=/scratch/global_tmp/
+dcc_out_dir=$5
 
 #######################
 
@@ -52,5 +53,5 @@ samtools merge -l 9 -@ 40 $merged_bam $main_bam $mate1_bam $mate2_bam
 # re-index the newly aggregated BAM file
 samtools index $merged_bam
 
-circtools reconstruct -N $sample_name -D $dcc_dir/output/CircRNACount -B $merged_bam -A $bed_file -O $main_out -F $mate2_junction -R $mate2_junction -J $main_junction -T $tmp_folder -p refseq -r 4 -e 3 -q 2 -P 40
+FUCHS -N $sample_name -D $dcc_out_dir/CircRNACount -B $merged_bam -A $bed_file -O $main_out -F $mate2_junction -R $mate2_junction -J $main_junction -T $tmp_folder -p ensembl -r 2 -e 2 -q 2 -P 40
 
