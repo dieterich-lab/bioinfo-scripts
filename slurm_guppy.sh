@@ -22,4 +22,16 @@ if [ ! $# == 4 ]; then
   exit
 fi
 
-guppy_basecaller -r -i ${1} -s ${2} --flowcell ${4} --kit ${3} --num_callers 4 --gpu_runners_per_device 3 --cpu_threads_per_caller 1 --device "cuda:all"
+guppy_basecaller	--qscore_filtering \
+			--verbose_logs \
+			--compress_fastq \
+			--fast5_out \
+			-r \
+			-i ${1} \
+			-s ${2} \
+			--flowcell ${4} \
+			--kit ${3} \
+			--num_callers 4 \
+			--gpu_runners_per_device 3 \
+			--cpu_threads_per_caller 1 \
+			--device "cuda:all"
