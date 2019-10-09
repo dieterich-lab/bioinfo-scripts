@@ -17,8 +17,8 @@
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
 # check if we have 5 arguments
-if [ ! $# == 5 ]; then
-  echo "Usage: $0 [rRNA index argument] [Read 1 file] [Read 2 file] [target dir e.g. /awesome/project/] [R1 marker, e.g. R1 or 1_sequence]"
+if [ ! $# == 4 ]; then
+  echo "Usage: $0 [rRNA index argument] [Read 1 file] [target dir e.g. /awesome/project/] [R1 marker, e.g. R1 or 1_sequence]"
   exit
 fi
 
@@ -30,7 +30,7 @@ fi
 
 # remove the file extension and potential "R1" markings
 # (works for double extension, e.g. .fastq.gz)
-target=`expr ${2/$5/} : '\(.*\)\..*\.' | sed 's/_1$//g' `
+target=$4
 #echo $target
 #exit
 # load the bowtie2 module
@@ -43,5 +43,4 @@ module load bowtie2
 # display timing information
 # write gz unmapping reads [== no rRNA] to target dir
 
-bowtie2 -x $1 -1 $2 -2 $3 --no-unal --omit-sec-seq --threads 20 --mm --seed 1337 --time --un-conc-gz $4/$target.fastq.gz 2> $4/$target.log
-#bowtie2 -x $1 -1 $2 -2 $3 -S $4/$target.sam --no-unal --omit-sec-seq --threads 20 --mm --seed 1337 --time --un-conc-gz $4/$target.fastq.gz 2> $4/$target.log
+bowtie2 -x $1 -U $2 -S /dev/null --no-unal --omit-sec-seq --threads 20 --mm --seed 1337 --time --un ${3}/${target}.fastq.gz 2> $3/$target.log

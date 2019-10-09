@@ -7,19 +7,18 @@
 
 #SBATCH -n 1
 #SBATCH -N 1
-#SBATCH -c 16
-#SBATCH --mem=40G
-#SBATCH -J "featureCount"
+#SBATCH -c 2 
+#SBATCH --mem=1G
+#SBATCH -J "prepare-subread"
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-# module load R
+if [ ! $# == 2 ]; then
+  echo "Usage: $0 [STAR folder] [BAM folder] "
+  exit
+fi
 
-# check if we have 6 arguments
-#if [ ! $# == 2 ]; then
-#  echo "Usage: $0 [BAM folder] [GTF] [save to] [tmp]"
-#  exit
-#fi
+mkdir -pv ${2}
+cd ${1}
 
-Rscript /beegfs/homes/tjakobi/work/scripts/subread_feature_counts.R $@
- 
+parallel --verbose -j1 ln -v -s ../${1}/{1}/Aligned.noS.bam ../${2}/{1}.bam ::: *

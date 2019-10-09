@@ -7,19 +7,18 @@
 
 #SBATCH -n 1
 #SBATCH -N 1
-#SBATCH -c 16
-#SBATCH --mem=40G
+#SBATCH -c 10
+#SBATCH --mem=20G
 #SBATCH -J "featureCount"
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-# module load R
+module load bamtools
 
 # check if we have 6 arguments
-#if [ ! $# == 2 ]; then
-#  echo "Usage: $0 [BAM folder] [GTF] [save to] [tmp]"
-#  exit
-#fi
-
-Rscript /beegfs/homes/tjakobi/work/scripts/subread_feature_counts.R $@
- 
+if [ ! $# == 1 ]; then
+  echo "Usage: $0 [BAM file]"
+  exit
+fi
+echo $1
+bamtools stats -in $1 -insert 

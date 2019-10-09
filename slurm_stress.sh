@@ -7,19 +7,11 @@
 
 #SBATCH -n 1
 #SBATCH -N 1
-#SBATCH -c 16
-#SBATCH --mem=40G
-#SBATCH -J "featureCount"
+#SBATCH -c 40 
+#SBATCH --mem=200G
+#SBATCH -p gpu
+#SBATCH -J "CPU stress test"
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-# module load R
-
-# check if we have 6 arguments
-#if [ ! $# == 2 ]; then
-#  echo "Usage: $0 [BAM folder] [GTF] [save to] [tmp]"
-#  exit
-#fi
-
-Rscript /beegfs/homes/tjakobi/work/scripts/subread_feature_counts.R $@
- 
+stress --cpu 40 --verbose 

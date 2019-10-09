@@ -7,19 +7,17 @@
 
 #SBATCH -n 1
 #SBATCH -N 1
-#SBATCH -c 16
-#SBATCH --mem=40G
-#SBATCH -J "featureCount"
+#SBATCH -c 20
+#SBATCH --mem=50G
+#SBATCH -J "samtools merge"
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-# module load R
-
 # check if we have 6 arguments
-#if [ ! $# == 2 ]; then
-#  echo "Usage: $0 [BAM folder] [GTF] [save to] [tmp]"
-#  exit
-#fi
+if [ ! $# == 2 ]; then
+  echo "Usage: $0 [output file] [input BAM suffix, e.g. bla.bam -> *bla.bam]"
+  exit
+fi
 
-Rscript /beegfs/homes/tjakobi/work/scripts/subread_feature_counts.R $@
- 
+time samtools merge -@20 ${1} *${2}
+time genomeCoverageBed -bg -ibam ${1}

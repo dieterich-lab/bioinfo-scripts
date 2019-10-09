@@ -28,7 +28,7 @@ fi
 
 # remove the file extension and potential "R1" markings
 # (works for double extension, e.g. .fastq.gz)
-target=`expr ${2/$5/} : '\(.*\)\..*\.'`
+target=$5
 
 # create the target directory, STAR will not do that for us
 mkdir -pv $4/$target
@@ -84,12 +84,12 @@ gzip Unmapped.out.mate2
 
 awk 'BEGIN {OFS="\t"} {split($6,C,/[0-9]*/); split($6,L,/[SMDIN]/); if (C[2]=="S") {$10=substr($10,L[1]+1); $11=substr($11,L[1]+1)}; if (C[length(C)]=="S") {L1=length($10)-L[length(L)-1]; $10=substr($10,1,L1); $11=substr($11,1,L1); }; gsub(/[0-9]*S/,"",$6); print}' Aligned.out.sam > Aligned.noS.sam
 
-awk 'BEGIN {OFS="\t"} {split($6,C,/[0-9]*/); split($6,L,/[SMDIN]/); if (C[2]=="S") {$10=substr($10,L[1]+1); $11=substr($11,L[1]+1)}; if (C[length(C)]=="S") {L1=length($10)-L[length(L)-1]; $10=substr($10,1,L1); $11=substr($11,1,L1); }; gsub(/[0-9]*S/,"",$6); print}' Chimeric.out.sam > Chimeric.noS.sam
+#awk 'BEGIN {OFS="\t"} {split($6,C,/[0-9]*/); split($6,L,/[SMDIN]/); if (C[2]=="S") {$10=substr($10,L[1]+1); $11=substr($11,L[1]+1)}; if (C[length(C)]=="S") {L1=length($10)-L[length(L)-1]; $10=substr($10,1,L1); $11=substr($11,1,L1); }; gsub(/[0-9]*S/,"",$6); print}' Chimeric.out.sam > Chimeric.noS.sam
 
 grep "^@" Aligned.out.sam > header.txt
 
 rm -f Aligned.out.sam
-rm -f Chimeric.out.sam
+#rm -f Chimeric.out.sam
 
 rm -f -r _STARgenome
 rm -f -r _STARpass1
@@ -99,13 +99,13 @@ samtools reheader header.txt Aligned.noS.bam > Aligned.noS.tmp
 mv Aligned.noS.tmp Aligned.noS.bam
 samtools index Aligned.noS.bam
 
-samtools view -bS Chimeric.noS.sam | samtools sort -@ 10 -m 2G -T tempo -o Chimeric.noS.bam /dev/stdin
-samtools reheader header.txt Chimeric.noS.bam > Chimeric.noS.tmp
-mv Chimeric.noS.tmp Chimeric.noS.bam
-samtools index Chimeric.noS.bam
+#samtools view -bS Chimeric.noS.sam | samtools sort -@ 10 -m 2G -T tempo -o Chimeric.noS.bam /dev/stdin
+#samtools reheader header.txt Chimeric.noS.bam > Chimeric.noS.tmp
+#mv Chimeric.noS.tmp Chimeric.noS.bam
+#samtools index Chimeric.noS.bam
 
 rm -f Aligned.noS.sam
-rm -f Chimeric.noS.sam
+#rm -f Chimeric.noS.sam
 
 cd $OLD_PATH
 
@@ -149,12 +149,12 @@ cd $4/$target/mate1/
 
 awk 'BEGIN {OFS="\t"} {split($6,C,/[0-9]*/); split($6,L,/[SMDIN]/); if (C[2]=="S") {$10=substr($10,L[1]+1); $11=substr($11,L[1]+1)}; if (C[length(C)]=="S") {L1=length($10)-L[length(L)-1]; $10=substr($10,1,L1); $11=substr($11,1,L1); }; gsub(/[0-9]*S/,"",$6); print}' Aligned.out.sam > Aligned.noS.sam
 
-awk 'BEGIN {OFS="\t"} {split($6,C,/[0-9]*/); split($6,L,/[SMDIN]/); if (C[2]=="S") {$10=substr($10,L[1]+1); $11=substr($11,L[1]+1)}; if (C[length(C)]=="S") {L1=length($10)-L[length(L)-1]; $10=substr($10,1,L1); $11=substr($11,1,L1); }; gsub(/[0-9]*S/,"",$6); print}' Chimeric.out.sam > Chimeric.noS.sam
+#awk 'BEGIN {OFS="\t"} {split($6,C,/[0-9]*/); split($6,L,/[SMDIN]/); if (C[2]=="S") {$10=substr($10,L[1]+1); $11=substr($11,L[1]+1)}; if (C[length(C)]=="S") {L1=length($10)-L[length(L)-1]; $10=substr($10,1,L1); $11=substr($11,1,L1); }; gsub(/[0-9]*S/,"",$6); print}' Chimeric.out.sam > Chimeric.noS.sam
 
 grep "^@" Aligned.out.sam > header.txt
 
 rm -f Aligned.out.sam
-rm -f Chimeric.out.sam
+#rm -f Chimeric.out.sam
 
 rm -f -r _STARgenome
 rm -f -r _STARpass1
@@ -164,13 +164,15 @@ samtools reheader header.txt Aligned.noS.bam > Aligned.noS.tmp
 mv Aligned.noS.tmp Aligned.noS.bam
 samtools index Aligned.noS.bam
 
-samtools view -bS Chimeric.noS.sam | samtools sort -@ 10 -m 2G -T tempo -o Chimeric.noS.bam /dev/stdin
-samtools reheader header.txt Chimeric.noS.bam > Chimeric.noS.tmp
-mv Chimeric.noS.tmp Chimeric.noS.bam
-samtools index Chimeric.noS.bam
+#samtools view -bS Chimeric.noS.sam | samtools sort -@ 10 -m 2G -T tempo -o Chimeric.noS.bam /dev/stdin
+#samtools reheader header.txt Chimeric.noS.bam > Chimeric.noS.tmp
+#mv Chimeric.noS.tmp Chimeric.noS.bam
+#samtools index Chimeric.noS.bam
 
 rm -f Aligned.noS.sam
-rm -f Chimeric.noS.sam
+#rm -f Chimeric.noS.sam
+
+gzip Unmapped.out.mate1
 
 cd $OLD_PATH
 
@@ -213,12 +215,12 @@ cd $4/$target/mate2/
 
 awk 'BEGIN {OFS="\t"} {split($6,C,/[0-9]*/); split($6,L,/[SMDIN]/); if (C[2]=="S") {$10=substr($10,L[1]+1); $11=substr($11,L[1]+1)}; if (C[length(C)]=="S") {L1=length($10)-L[length(L)-1]; $10=substr($10,1,L1); $11=substr($11,1,L1); }; gsub(/[0-9]*S/,"",$6); print}' Aligned.out.sam > Aligned.noS.sam
 
-awk 'BEGIN {OFS="\t"} {split($6,C,/[0-9]*/); split($6,L,/[SMDIN]/); if (C[2]=="S") {$10=substr($10,L[1]+1); $11=substr($11,L[1]+1)}; if (C[length(C)]=="S") {L1=length($10)-L[length(L)-1]; $10=substr($10,1,L1); $11=substr($11,1,L1); }; gsub(/[0-9]*S/,"",$6); print}' Chimeric.out.sam > Chimeric.noS.sam
+#awk 'BEGIN {OFS="\t"} {split($6,C,/[0-9]*/); split($6,L,/[SMDIN]/); if (C[2]=="S") {$10=substr($10,L[1]+1); $11=substr($11,L[1]+1)}; if (C[length(C)]=="S") {L1=length($10)-L[length(L)-1]; $10=substr($10,1,L1); $11=substr($11,1,L1); }; gsub(/[0-9]*S/,"",$6); print}' Chimeric.out.sam > Chimeric.noS.sam
 
 grep "^@" Aligned.out.sam > header.txt
 
 rm -f Aligned.out.sam
-rm -f Chimeric.out.sam
+#rm -f Chimeric.out.sam
 
 rm -f -r _STARgenome
 rm -f -r _STARpass1
@@ -228,13 +230,15 @@ samtools reheader header.txt Aligned.noS.bam > Aligned.noS.tmp
 mv Aligned.noS.tmp Aligned.noS.bam
 samtools index Aligned.noS.bam
 
-samtools view -bS Chimeric.noS.sam | samtools sort -@ 10 -m 2G -T tempo -o Chimeric.noS.bam /dev/stdin
-samtools reheader header.txt Chimeric.noS.bam > Chimeric.noS.tmp
-mv Chimeric.noS.tmp Chimeric.noS.bam
-samtools index Chimeric.noS.bam
+#samtools view -bS Chimeric.noS.sam | samtools sort -@ 10 -m 2G -T tempo -o Chimeric.noS.bam /dev/stdin
+#samtools reheader header.txt Chimeric.noS.bam > Chimeric.noS.tmp
+#mv Chimeric.noS.tmp Chimeric.noS.bam
+#samtools index Chimeric.noS.bam
 
 rm -f Aligned.noS.sam
-rm -f Chimeric.noS.sam
+#rm -f Chimeric.noS.sam
+
+gzip Unmapped.out.mate1
 
 # remove tmp dirs
 

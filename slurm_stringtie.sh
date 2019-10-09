@@ -21,8 +21,8 @@
 
 #SBATCH -n 1
 #SBATCH -N 1
-#SBATCH -c 20
-#SBATCH --mem=100G
+#SBATCH -c 10
+#SBATCH --mem=10G
 #SBATCH -J "Stringtie"
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
@@ -43,7 +43,7 @@ fi
 mkdir $3 -p
 #rm $3/*.gtf
 
-stringtie $1 -v -f 0.2 -p 20 -G $2 -e -B -o $3/ballgown.gtf -C $3/reference_transcripts_full_coverage.gtf
+stringtie $1 -v -f 0.2 -p 10 -G $2 -e -B -o $3/ballgown.gtf -C $3/reference_transcripts_full_coverage.gtf
 
 #stringtie $1 -p 20 -G $2 -B -e 
 #stringtie $1 -p 40 -G $2 -e -o $3/stringtie.gtf -C $3/reference_transcripts_full_coverage.gtf -B

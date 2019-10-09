@@ -21,14 +21,10 @@ if [ ! $# == 3 ]; then
   exit
 fi
 
-# $1 -> Genome index
-# $2 -> Read 1
-# $3 -> Read 2
-# $4 -> Target directory
+# $1 -> Annotation
+# $2 -> input BAM
+# $3 -> Target directory
 
-# remove the file extension and potential "R1" markings
-# (works for double extension, e.g. .fastq.gz)
-target=`expr ${2/$5/} : '\(.*\)\..*\.'`
+htseq-count stranded=yes -f bam $2 $1 > $3/$2.counts
 
- htseq-count -f bam $4/$target/Aligned.sortedByCoord.out.bam /biodb/genomes/mus_musculus/GRCm38_85/GRCm38.85.gtf > $4/$target/${target}.counts
- htseq-count stranded=no -f bam $4/$target/Aligned.sortedByCoord.out.bam /biodb/genomes/mus_musculus/GRCm38_85/GRCm38.85.gtf > $4/$target/${target}.counts.unstranded
+#htseq-count stranded=yes -f bam $4/$target/Aligned.sortedByCoord.out.bam /biodb/genomes/mus_musculus/GRCm38_85/GRCm38.85.gtf > $4/$target/${target}.counts.unstranded

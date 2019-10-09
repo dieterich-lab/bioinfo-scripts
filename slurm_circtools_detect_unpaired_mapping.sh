@@ -36,24 +36,40 @@ target=`expr ${2//} : '\(.*\)\..*\.'`
 # create the target directory, STAR will not do that for us
 mkdir -pv $3/$target
 
-STAR --runThreadN 20 \
-       --genomeDir $1 \
-       --readFilesIn $2 \
-       --readFilesCommand zcat \
-       --outFileNamePrefix $3/$target/ \
-       --outSJfilterOverhangMin 5 5 5 5 \
-       --alignSJoverhangMin 5 \
-       --alignSJDBoverhangMin 5 \
-       --outFilterMultimapNmax 20 \
-       --outFilterScoreMin 1 \
-       --outFilterMatchNmin 1 \
-       --outFilterMismatchNmax 2 \
-       --chimSegmentMin 5 \
-       --chimScoreMin 5 \
-       --chimScoreSeparation 10 \
-       --chimJunctionOverhangMin 5 \
-       --chimOutType Junctions SeparateSAMold\
-       --sjdbGTFfile $4 
+TMP_RND=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 10 | head -n 1`
+
+# main mapping part
+
+STAR    --runThreadN 40\
+        --genomeDir $1\
+        --genomeLoad NoSharedMemory\
+        --outTmpDir /scratch/global_tmp/${TMP_RND}_${target}/\
+        --readFilesIn $2\
+        --readFilesCommand zcat\
+        --outFileNamePrefix $3/$target/\
+        --outReadsUnmapped Fastx\
+        --outSAMattributes NH   HI   AS   nM   NM   MD   jM   jI   XS\
+        --outSJfilterOverhangMin 15   15   15   15\
+        --outFilterMultimapNmax 20\
+        --chimMultimapNmax 20\
+        --outFilterScoreMin 1\
+        --outFilterMatchNminOverLread 0.7\
+        --outFilterMismatchNmax 999\
+        --outFilterMismatchNoverLmax 0.05\
+        --alignIntronMin 20\
+        --alignIntronMax 1000000\
+        --alignMatesGapMax 1000000\
+        --alignSJoverhangMin 15\
+        --alignSJDBoverhangMin 10\
+        --alignSoftClipAtReferenceEnds No\
+        --chimSegmentMin 15\
+        --chimScoreMin 15\
+        --chimScoreSeparation 10\
+        --chimJunctionOverhangMin 15\
+        --sjdbGTFfile $4\
+        --quantMode GeneCounts\
+        --twopassMode Basic\
+        --chimOutType Junctions
 
 cd $3/$target
 

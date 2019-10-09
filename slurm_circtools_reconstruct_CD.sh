@@ -32,14 +32,14 @@ dcc_out_dir=$5
 
 #######################
 
-main_bam=$dcc_dir/${sample_name}.bam
-main_junction=$dcc_dir/${sample_name}.Chimeric.out.junction
+main_bam=$dcc_dir/${sample_name}_STARmapping.bam
+main_junction=$dcc_dir/${sample_name}_STARmappingChimeric.out.junction
 
-mate1_bam=$dcc_dir/${sample_name}.mate1.bam
-mate1_junction=$dcc_dir/${sample_name}.mate1.Chimeric.out.junction
+mate1_bam=$dcc_dir/${sample_name}_mate1_STARmapping.bam
+mate1_junction=$dcc_dir/${sample_name}_mate1_STARmappingChimeric.out.junction
 
-mate2_bam=$dcc_dir/${sample_name}.mate2.bam
-mate2_junction=$dcc_dir/${sample_name}.mate2.Chimeric.out.junction.fixed
+mate2_bam=$dcc_dir/${sample_name}_mate2_STARmapping.bam
+mate2_junction=$dcc_dir/${sample_name}_mate2_STARmappingChimeric.out.junction.fixed
 
 merged_bam=$main_out/${sample_name}_merged.bam
 
