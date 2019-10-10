@@ -18,11 +18,10 @@
 import argparse
 import codecs
 import hashlib
-import os
 import random
 import re
 import textwrap
-
+import subprocess
 
 # Generate XKCD style passwords
 # from: https://stackoverflow.com/a/9368832/1900920
@@ -54,27 +53,11 @@ def gen_password(num=1):
 
 
 # Get SSHA value
-# from:  https://www.openldap.org/faq/data/cache/347.html:
-
-from base64 import urlsafe_b64encode as encode
-from base64 import urlsafe_b64decode as decode
-
 
 def get_ssha_password(password):
-    salt = os.urandom(4)
-    h = hashlib.sha1(password.encode('utf-8'))
-    h.update(salt)
-    return "{SSHA}" + str(encode(h.digest() + salt))
 
-
-def check_password(challenge_password, password):
-    challenge_bytes = decode(challenge_password[6:])
-    digest = challenge_bytes[:20]
-    salt = challenge_bytes[20:]
-    hr = hashlib.sha1(password)
-    hr.update(salt)
-    return digest == hr.digest()
-
+    pw = subprocess.check_output(['/usr/sbin/slappasswd', '-h{SSHA}', '-s', password]).rstrip()
+    return "{SSHA}"+str(pw)
 
 # End SSHA functions
 
