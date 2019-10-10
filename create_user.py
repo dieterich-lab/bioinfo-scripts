@@ -107,14 +107,14 @@ def generate_ldif_file(cli_args):
 
     print("version: 1")
 
-    print("dn: cn=", cli_args.name, " ", cli_args.family_name, ",ou=Users,dc=dieterichlab,dc=org")
-    print("cn: ", cli_args.name, " ", cli_args.family_name)
-    print("displayname: ", cli_args.name, " ", cli_args.family_name)
-    print("gidnumber: ", cli_args.group_id)
-    print("givenname: ", cli_args.name)
+    print("dn: cn=" + cli_args.name + " " + cli_args.family_name + ",ou=Users,dc=dieterichlab,dc=org")
+    print("cn: " + cli_args.name + " " + cli_args.family_name)
+    print("displayname: " + cli_args.name + " " + cli_args.family_name)
+    print("gidnumber: " + str(cli_args.group_id))
+    print("givenname: " + cli_args.name)
     print("homedirectory: /home/" + username_from_full_name(cli_args.name, cli_args.family_name))
     print("loginshell: /bin/bash")
-    print("mail: ", cli_args.email)
+    print("mail: " + cli_args.email)
 
     print(textwrap.dedent("""\
     objectclass: shadowAccount
@@ -140,19 +140,25 @@ def generate_ldif_file(cli_args):
     shadowmin: 1
     shadowwarning: 10
     """))
-    print("sn: ", cli_args.family_name)
+    print("sn: " + cli_args.family_name)
     print("uid: " + username_from_full_name(cli_args.name, cli_args.family_name))
-    print("uidnumber: ", cli_args.user_id)
+    print("uidnumber: " + str(cli_args.user_id))
     print("userpassword: " + get_ssha_password(cli_args.password))
 
 
 def create_ldif_entry(cli_args):
-    if cli_args.domain is "AZ3":
+
+    if cli_args.domain == "AZ3":
         cli_args.samba_id = "S-1-5-21-1426298215-3934214462-2063419693"
     else:
         cli_args.samba_id = "S-1-5-21-3632671680-3219116354-420167436"
 
+    cli_args.name = cli_args.name.rstrip()
+    cli_args.family_name = cli_args.family_name.rstrip()
+
     generate_ldif_file(cli_args)
+
+# main script starts here
 
 
 parser = argparse.ArgumentParser(prog="create_user", formatter_class=argparse.RawDescriptionHelpFormatter,
