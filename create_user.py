@@ -79,8 +79,16 @@ def check_password(challenge_password, password):
 # End SSHA functions
 
 
-def username_from_full_name(name, family_name):
-    return (name[0] + family_name).lower()
+def username_from_full_name(cli_args):
+
+    if not cli_args.username:
+
+        name = cli_args.name
+        family_name = cli_args.family_name
+        return (name[0] + family_name).lower()
+
+    else:
+        return cli_args.username
 
 
 def samba_ntpassword_from_password(password):
@@ -112,7 +120,7 @@ def generate_ldif_file(cli_args):
     print("displayname: " + cli_args.name + " " + cli_args.family_name)
     print("gidnumber: " + str(cli_args.group_id))
     print("givenname: " + cli_args.name)
-    print("homedirectory: /home/" + username_from_full_name(cli_args.name, cli_args.family_name))
+    print("homedirectory: /home/" + username_from_full_name(cli_args))
     print("loginshell: /bin/bash")
     print("mail: " + cli_args.email)
 
@@ -141,7 +149,7 @@ def generate_ldif_file(cli_args):
     shadowwarning: 10
     """))
     print("sn: " + cli_args.family_name)
-    print("uid: " + username_from_full_name(cli_args.name, cli_args.family_name))
+    print("uid: " + username_from_full_name(cli_args))
     print("uidnumber: " + str(cli_args.user_id))
     print("userpassword: " + get_ssha_password(cli_args.password))
 
@@ -179,6 +187,12 @@ group.add_argument("-U",
                    help="Numerical user ID to start with (for batch creations)",
                    required=True,
                    type=int
+                   )
+
+group.add_argument("-u",
+                   "--user-name",
+                   dest="username",
+                   help="UNIX user name (overides auto-generated username)"
                    )
 
 group.add_argument("-g",
