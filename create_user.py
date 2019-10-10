@@ -129,6 +129,7 @@ def generate_ldif_file(cli_args):
     print("uid: " + username_from_full_name(cli_args))
     print("uidnumber: " + str(cli_args.user_id))
     print("userpassword: " + get_ssha_password(cli_args.password))
+    print("")
 
 
 def create_ldif_entry(cli_args):
