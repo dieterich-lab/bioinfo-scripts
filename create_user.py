@@ -26,6 +26,7 @@ import subprocess
 # Generate XKCD style passwords
 # from: https://stackoverflow.com/a/9368832/1900920
 
+
 # apt-get install wbritish
 def random_words(num, dictionary="/usr/share/dict/british-english"):
     r = random.SystemRandom()  # i.e. preferably not pseudo-random
@@ -57,7 +58,7 @@ def gen_password(num=1):
 def get_ssha_password(password):
 
     pw = subprocess.check_output(['/usr/sbin/slappasswd', '-h{SSHA}', '-s', password]).rstrip()
-    return "{SSHA}"+str(pw)
+    return str(pw.decode('UTF-8'))
 
 # End SSHA functions
 
@@ -106,16 +107,12 @@ def generate_ldif_file(cli_args):
     print("homedirectory: /home/" + username_from_full_name(cli_args))
     print("loginshell: /bin/bash")
     print("mail: " + cli_args.email)
-
-    print(textwrap.dedent("""\
-    objectclass: shadowAccount
-    objectclass: sambaSamAccount
-    objectclass: posixAccount
-    objectclass: inetOrgPerson
-    objectclass: organizationalPerson
-    objectclass: person
-    """))
-
+    print("objectclass: shadowAccount")
+    print("objectclass: sambaSamAccount")
+    print("objectclass: posixAccount")
+    print("objectclass: inetOrgPerson")
+    print("objectclass: organizationalPerson")
+    print("objectclass: person")
     print("sambaacctflags: [XU         ]")
     print("sambadomainname: " + cli_args.domain)
     print("sambahomedrive: U:")
@@ -123,14 +120,11 @@ def generate_ldif_file(cli_args):
     print("sambaprimarygroupsid: " + samba_guid_from_group_id(cli_args.group_id, cli_args.samba_id))
     print("sambapwdlastset: 1554477616")
     print("sambasid: " + samba_uid_from_uid(cli_args.user_id, cli_args.samba_id))
-
-    print(textwrap.dedent("""\
-    shadowinactive: 10
-    shadowlastchange: 17991
-    shadowmax: 365
-    shadowmin: 1
-    shadowwarning: 10
-    """))
+    print("shadowinactive: 10")
+    print("shadowlastchange: 17991")
+    print("shadowmax: 365")
+    print("shadowmin: 1")
+    print("shadowwarning: 10")
     print("sn: " + cli_args.family_name)
     print("uid: " + username_from_full_name(cli_args))
     print("uidnumber: " + str(cli_args.user_id))
