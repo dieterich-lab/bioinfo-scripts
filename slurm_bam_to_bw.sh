@@ -12,4 +12,7 @@
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_80
 #SBATCH --mail-user=tobias.jakobi@med.uni-heidelberg.de
 
-bamTobw.sh -b ${1}
+samtools index ${1}
+bamCoverage -b ${1} -o ${1}.bw
+
+#bamTobw.sh -b ${1}
