@@ -43,5 +43,5 @@ module load bowtie2
 # display timing information
 # write gz unmapping reads [== no rRNA] to target dir
 
-bowtie2 -x $1 -1 $2 -2 $3 --no-unal --omit-sec-seq --threads 20 --mm --seed 1337 --time --un-conc-gz $4/$target.fastq.gz 2> $4/$target.log
+bowtie2 -S /dev/null -x $1 -1 $2 -2 $3 --no-unal --omit-sec-seq --threads 20 --mm --seed 1337 --time --un-conc-gz $4/$target.fastq.gz 2> $4/$target.log
 #bowtie2 -x $1 -1 $2 -2 $3 -S $4/$target.sam --no-unal --omit-sec-seq --threads 20 --mm --seed 1337 --time --un-conc-gz $4/$target.fastq.gz 2> $4/$target.log
