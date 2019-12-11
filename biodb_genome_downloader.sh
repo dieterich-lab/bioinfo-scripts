@@ -182,6 +182,7 @@ if  [ -z "$3" ] ; then
 	else
 		wget -nc -nv ftp://ftp.ensembl.org/pub/$release/fasta/$organism/dna/*.dna.toplevel.fa.gz
 		wget -nc -nv ftp://ftp.ensembl.org/pub/$release/fasta/$organism/dna/*.dna.primary_assembly.fa.gz
+                wget -nc -nv ftp://ftp.ensembl.org/pub/$release/fasta/$organism/cdna/*.cdna.all.fa.gz
 	fi
 
 	wget -nc -nv ftp://ftp.ensembl.org/pub/$release/gtf/$organism/*.gtf.gz
@@ -318,16 +319,6 @@ cd ..
 
 printf "Toplevel: $toplevel\n"
 
-echo "Building bowtie2 index...\n"
-# bowtie2 index
-module load bowtie2
-mkdir bowtie2
-cd bowtie2
-ln -vs ../${original} ${original}
-srun -J "Bowtie2 index: $organism / $release" -e bowtie2.err  -o bowtie2.log -c 2 --mem 50G bowtie2-build-s $original $toplevel
-
-cd ..
-pwd
 gtf=$(ls -C *.gtf)
 
 # STAR index creation
@@ -348,6 +339,24 @@ sbatch -p long -J "STAR index: $organism / $release"  --cpus-per-task=40 --mem=2
 cd ..
 
 
+# salmon index creation
+
+printf "Generating salmon index\n"
+
+module load salmon
+mkdir salmon
+cd salmon
+full_path=$(pwd)
+ln -s ../*cdna*fa .
+transcript=$(ls -C *.fa)
+echo "#!/bin/bash
+# k31 -> 75bp reads or longer
+salmon index -k31 -t ${transcript} -i ${full_path} -p 40 
+which salmon" > salmon.sh;
+chmod 770 salmon.sh;
+sbatch -p long -J "salmon index: $organism / $release"  --cpus-per-task=40 --mem=250G -o salmon.log salmon.sh
+cd ..
+
 # Fix GTF with cuffcompare
 
 printf "Fixing GTF $gtf...\n"
@@ -360,6 +369,18 @@ rm -v cuffcmp.*
 mv -v tmp.gtf cuffcmp.$gtf
 #srun -o tar.log -J "cuffcompare taring" tar -cvf cuffcmp.results.tar cuffcmp.* --remove-files
 #srun -o pbzip2.log -J "cuffcompare bzipping" -c 20 --mem=4000 pbzip2 -p20 cuffcmp.results.tar
+
+
+echo "Building bowtie2 index...\n"
+# bowtie2 index
+module load bowtie2
+mkdir bowtie2
+cd bowtie2
+ln -vs ../${original} ${original}
+srun -J "Bowtie2 index: $organism / $release" -e bowtie2.err  -o bowtie2.log -c 2 --mem 50G bowtie2-build-s $original $toplevel
+
+cd ..
+pwd
 
 # Generate TOPHAT transcriptome indexes
 
