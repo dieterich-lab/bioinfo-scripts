@@ -29,13 +29,12 @@
 
 # check if we have 8 arguments
 if [ ! $# == 8 ]; then
-  echo "Usage: $0 [Target folder] [Read FASTA] [READ BAM] [# unmod reads] [# mod reads] [mod read list] [unmod read list] [FAST5 dir]"
+  echo "Usage: $0 [Target folder] [Read FASTA] [# unmod reads] [# mod reads] [mod read list] [unmod read list] [FAST5 dir]"
   exit
 fi
 
 target_dir=${1}__${4}_unmod_${5}_mod
 fasta=$2
-bam=$3
 num_unmod=$4
 num_mod=$5
 mod_reads=$6
@@ -50,7 +49,6 @@ mkdir $target_dir -pv
 cd $target_dir
 
 ln -s $fasta .
-ln -s $bam .
 
 shuf -n $num_mod $mod_reads > ${num_mod}_random_curlcake_reads.list
 shuf -n $num_unmod $unmod_reads > ${num_unmod}_random_reads.list
